@@ -1,0 +1,44 @@
+name: Metrics
+on:
+  schedule: [{ cron: "0 3 * * *" }]   # daily, 06:00 Moscow
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stats and languages
+        uses: lowlighter/metrics@v3.34
+        with:
+          filename: metrics/stats.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          config_timezone: Europe/Moscow
+          base: header, activity, repositories
+          repositories_affiliations: owner
+          plugin_languages: yes
+          plugin_languages_ignored: html, css, javascript
+          plugin_languages_details: percentage
+          plugin_languages_limit: 6
+
+      - name: Achievements (trophies)
+        uses: lowlighter/metrics@v3.34
+        with:
+          filename: metrics/achievements.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          base: ""
+          plugin_achievements: yes
+          plugin_achievements_display: compact
+          plugin_achievements_threshold: C
+          plugin_achievements_limit: 8
+
+      - name: Activity calendar
+        uses: lowlighter/metrics@v3.34
+        with:
+          filename: metrics/calendar.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          base: ""
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: full-year
